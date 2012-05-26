@@ -1,7 +1,7 @@
-# Ignore generated output
 target/
-
-# Ignore project files
 .classpath
 .project
 .cache
+.scala_dependencies
+*.class
+*.log
