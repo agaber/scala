@@ -5,3 +5,4 @@ target/
 .scala_dependencies
 *.class
 *.log
+*.orig
