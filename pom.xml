@@ -23,18 +23,19 @@
     <maven.compiler.target>1.6</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <scala.version>2.9.2</scala.version>
   </properties>
  
   <dependencies>
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
-      <version>2.9.2</version>
+      <version>${scala.version}</version>
     </dependency>
     
     <dependency>
 		  <groupId>org.scalatest</groupId>
-		  <artifactId>scalatest_2.9.2</artifactId>
+		  <artifactId>scalatest_${scala.version}</artifactId>
 		  <version>1.7.2</version>
 		  <scope>test</scope>
 		</dependency>
