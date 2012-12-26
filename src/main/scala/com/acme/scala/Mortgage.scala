@@ -46,9 +46,9 @@ class Mortgage(
    * assuming a fixed rate mortgage payment type.
    */
   val monthlyFixedRateMortgagePayment = calculateFixedRateMonthlyMortgagePayment(
-      principal, 
-      term, 
-      rate) 
+      principal,
+      term,
+      rate)
 
   /**
    * The minimum amount you need to pay every month, all things considered.

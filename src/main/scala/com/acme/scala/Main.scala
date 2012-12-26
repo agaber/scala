@@ -4,6 +4,10 @@ import scopt.mutable.OptionParser
 
 object Main {
   def main(args: Array[String]) {
+    doMortgageCalculator(args)
+  }
+  
+  private def doMortgageCalculator(args: Array[String]): Unit = {
     val config = parseMortgageCalculatorCommandLineOptions(args)
     println(new Mortgage(
         config.price,
@@ -14,10 +18,10 @@ object Main {
         config.rate))
   }
 
-  def parseMortgageCalculatorCommandLineOptions(args: Array[String]): Config = {
+  def parseCommandLineOptions(args: Array[String]): Config = {
     val config: Config = new Config()
 
-    val parser = new OptionParser("mortgage_calculator", "1.0") {
+    val parser = new OptionParser("sandbox", "1.0") {
       doubleOpt(
           "p", 
           "price",
