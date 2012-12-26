@@ -1,7 +1,76 @@
 package com.acme.scala
 
+import scopt.mutable.OptionParser
+
 object Main {
+  
   def main(args: Array[String]) {
+    val config = parseCommandLineOptions(args)
+    if (config != null) {
+      println(new Mortgage(
+          config.price,
+          config.percentDown,
+          config.monthlyMaitenanceFee,
+          config.monthlyRealEstateTax,
+          config.term,
+          config.rate))
+    }
+  }
+  
+  def parseCommandLineOptions(args: Array[String]): Config = {
+    val config: Config = new Config()
+
+    val parser = new OptionParser("mortgage_calculator", "1.0") {
+	  doubleOpt(
+	      "p", 
+	      "price",
+	      "<price>",
+	      "the asking price for the unit", 
+	      { v: Double => config.price = v })
+
+	  doubleOpt(
+	      "d",
+	      "percentDown",
+	      "<percentDown>",
+	      "the percentage paid up front", 
+	      { v: Double => config.percentDown = v })
+
+	  doubleOpt(
+	      "f", 
+	      "monthlyMaintenanceFee",
+	      "<monthlyMaintenanceFee>",
+	      { v: Double => config.monthlyMaitenanceFee = v })
+
+	  doubleOpt(
+	      "t", 
+	      "monthlyRealEstateTax", 
+	      "<monthlyRealEstateTax>",
+	      { v: Double => config.monthlyRealEstateTax = v })
+      
+      intOpt(
+		  "y", 
+		  "term",
+		  "<term>",
+		  "the number of years the loan must be paid back. Usually 15 or 30.", 
+		  { v: Int => config.term = v })
+
+	  doubleOpt(
+	      "r",
+	      "rate",
+	      "<rate>",
+	      "the monthly mortgage rate", 
+	      { v: Double => config.rate = v })
+	}
+    
+    if (parser.parse(args)) {
+      // TODO: Check params.
+      return config      
+    }
+
+    return null
+  }
+
+  def test() {
     // args.foreach(arg => printf("%s ", arg))
     printf("max of 10 and 20 is %d%n", max(10, 20))
     printf("max of 32 and 11 is %d%n", max(32, 11))
@@ -22,4 +91,13 @@ object Main {
   def max(x: Int, y: Int) = {
     if (x > y) x else y
   }
+}
+
+class Config {
+  var price: Double = 0
+  var percentDown: Double = 0
+  var monthlyMaitenanceFee: Double = 0
+  var monthlyRealEstateTax: Double = 0
+  var term: Int = 30
+  var rate: Double = 0
 }

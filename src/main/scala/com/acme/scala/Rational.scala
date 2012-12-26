@@ -26,7 +26,7 @@ class Rational(n: Int, d: Int) {
   }
 
   def -(i: Int) = {
-      new Rational(this.numerator - i * this.denominator, this.denominator)
+    new Rational(this.numerator - i * this.denominator, this.denominator)
   }
 
   def *(that: Rational) = {
@@ -61,7 +61,11 @@ class Rational(n: Int, d: Int) {
   // TODO: hashcode
 
   override def toString() = {
-    this.numerator + "/" + this.denominator
+    if (this.denominator == 1) {
+      this.numerator.toString() 
+    } else {
+      this.numerator + "/" + this.denominator
+    }
   }
 
   private def gcd(a: Int, b: Int): Int = {
