@@ -3,70 +3,74 @@ package com.acme.scala
 import scopt.mutable.OptionParser
 
 object Main {
-  
   def main(args: Array[String]) {
-    val config = parseCommandLineOptions(args)
-    if (config != null) {
-      println(new Mortgage(
-          config.price,
-          config.percentDown,
-          config.monthlyMaitenanceFee,
-          config.monthlyRealEstateTax,
-          config.term,
-          config.rate))
-    }
+    val config = parseMortgageCalculatorCommandLineOptions(args)
+    println(new Mortgage(
+        config.price,
+        config.percentDown,
+        config.monthlyMaitenanceFee,
+        config.monthlyRealEstateTax,
+        config.term,
+        config.rate))
   }
-  
-  def parseCommandLineOptions(args: Array[String]): Config = {
+
+  def parseMortgageCalculatorCommandLineOptions(args: Array[String]): Config = {
     val config: Config = new Config()
 
     val parser = new OptionParser("mortgage_calculator", "1.0") {
-	  doubleOpt(
-	      "p", 
-	      "price",
-	      "<price>",
-	      "the asking price for the unit", 
-	      { v: Double => config.price = v })
+      doubleOpt(
+          "p", 
+          "price",
+          "<price>",
+          "the asking price for the unit", 
+          { v: Double => config.price = v })
 
-	  doubleOpt(
-	      "d",
-	      "percentDown",
-	      "<percentDown>",
-	      "the percentage paid up front", 
-	      { v: Double => config.percentDown = v })
+      doubleOpt(
+          "d",
+          "percentDown",
+          "<percentDown>",
+          "the percentage paid up front", 
+          { v: Double => config.percentDown = v })
 
-	  doubleOpt(
-	      "f", 
-	      "monthlyMaintenanceFee",
-	      "<monthlyMaintenanceFee>",
-	      { v: Double => config.monthlyMaitenanceFee = v })
+      doubleOpt(
+          "f", 
+          "monthlyMaintenanceFee",
+          "<monthlyMaintenanceFee>",
+          { v: Double => config.monthlyMaitenanceFee = v })
 
-	  doubleOpt(
-	      "t", 
-	      "monthlyRealEstateTax", 
-	      "<monthlyRealEstateTax>",
-	      { v: Double => config.monthlyRealEstateTax = v })
+      doubleOpt(
+          "t", 
+          "monthlyRealEstateTax", 
+          "<monthlyRealEstateTax>",
+          { v: Double => config.monthlyRealEstateTax = v })
       
       intOpt(
-		  "y", 
-		  "term",
-		  "<term>",
-		  "the number of years the loan must be paid back. Usually 15 or 30.", 
-		  { v: Int => config.term = v })
+          "y", 
+          "term",
+          "<term>",
+          "the number of years the loan must be paid back. Usually 15 or 30.", 
+          { v: Int => config.term = v })
 
-	  doubleOpt(
-	      "r",
-	      "rate",
-	      "<rate>",
-	      "the monthly mortgage rate", 
-	      { v: Double => config.rate = v })
-	}
-    
-    if (parser.parse(args)) {
-      // TODO: Check params.
-      return config      
+      doubleOpt(
+          "r",
+          "rate",
+          "<rate>",
+          "the monthly mortgage rate", 
+          { v: Double => config.rate = v })
     }
 
+    if (parser.parse(args)
+        && (config.price > 0 
+        && config.percentDown >= 0
+        && config.monthlyMaitenanceFee >= 0
+        && config.monthlyRealEstateTax >= 0
+        && config.term > 0
+        && config.rate >= 0)) {
+      return config
+    }
+
+    parser.showUsage
+    System.exit(1)
     return null
   }
 
