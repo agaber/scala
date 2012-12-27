@@ -4,11 +4,16 @@ import scopt.mutable.OptionParser
 
 object Main {
   def main(args: Array[String]) {
-    doMortgageCalculator(args)
+    val config = parseCommandLineOptions(args)
+   
+    if (config.mode == "mortgage_calculator") {
+      doMortgageCalculator(config)
+    } else {
+      doRentCalculator(config)
+    }
   }
-  
-  private def doMortgageCalculator(args: Array[String]): Unit = {
-    val config = parseMortgageCalculatorCommandLineOptions(args)
+ 
+  def doMortgageCalculator(config: Config) {
     println(new Mortgage(
         config.price,
         config.percentDown,
@@ -17,59 +22,98 @@ object Main {
         config.term,
         config.rate))
   }
+ 
+  def doRentCalculator(config: Config) {
+    val rent = RentCalculator.calculate(config.rent, config.biweeklyIncome, config.feeRate)
+    printf(
+        ("%nrent: $%1.2f%n" +
+        "bi-weekly income: $%1.2f%n" +
+        "broker's fee rate: %1.2f%n" +
+        "------------------------%n" +
+        "two month's rent: $%1.2f%n" +
+        "broker's fee: $%1.2f%n" +
+        "total amount needed to move: $%1.2f%n" +
+        "It would take you %d pay cycles to save that much money.%n").format(
+        config.rent,
+        config.biweeklyIncome,
+        config.feeRate,
+        rent("twoMonthsRent"),
+        rent("fee"),
+        rent("total"),
+        rent("payCycles")))
+  }
 
   def parseCommandLineOptions(args: Array[String]): Config = {
     val config: Config = new Config()
 
     val parser = new OptionParser("sandbox", "1.0") {
+      opt(
+        "m",
+        "mode",
+        "rent_calculator or mortgage_calculator",
+        { v: String => config.mode = v })
+     
+     
       doubleOpt(
-          "p", 
+          "p",
           "price",
           "<price>",
-          "the asking price for the unit", 
+          "the asking price for the unit",
           { v: Double => config.price = v })
 
       doubleOpt(
           "d",
           "percentDown",
           "<percentDown>",
-          "the percentage paid up front", 
+          "the percentage paid up front",
           { v: Double => config.percentDown = v })
 
       doubleOpt(
-          "f", 
+          "f",
           "monthlyMaintenanceFee",
           "<monthlyMaintenanceFee>",
           { v: Double => config.monthlyMaitenanceFee = v })
 
       doubleOpt(
-          "t", 
-          "monthlyRealEstateTax", 
+          "t",
+          "monthlyRealEstateTax",
           "<monthlyRealEstateTax>",
           { v: Double => config.monthlyRealEstateTax = v })
-      
+     
       intOpt(
-          "y", 
+          "y",
           "term",
           "<term>",
-          "the number of years the loan must be paid back. Usually 15 or 30.", 
+          "the number of years the loan must be paid back. Usually 15 or 30.",
           { v: Int => config.term = v })
 
       doubleOpt(
           "r",
           "rate",
           "<rate>",
-          "the monthly mortgage rate", 
+          "the monthly mortgage rate",
           { v: Double => config.rate = v })
+         
+       doubleOpt(
+          "rent",
+          "<rent>",
+          "the monthly rent",
+          { v: Double => config.rent = v })
+         
+       doubleOpt(
+          "biweeklyIncome",
+          "<income>",
+          "how much income earned every 2 weeks",
+          { v: Double => config.biweeklyIncome = v })
+         
+       doubleOpt(
+          "feeRate",
+          "<fee>",
+          "broker's fee percentage of year's worth of rent",
+          { v: Double => config.feeRate = v })
     }
 
-    if (parser.parse(args)
-        && (config.price > 0 
-        && config.percentDown >= 0
-        && config.monthlyMaitenanceFee >= 0
-        && config.monthlyRealEstateTax >= 0
-        && config.term > 0
-        && config.rate >= 0)) {
+    if (parser.parse(args)) {
       return config
     }
 
@@ -102,10 +146,19 @@ object Main {
 }
 
 class Config {
+  var mode: String = "rent_calculator"
+ 
+  // mortgage_calculator props
   var price: Double = 0
   var percentDown: Double = 0
   var monthlyMaitenanceFee: Double = 0
   var monthlyRealEstateTax: Double = 0
   var term: Int = 30
   var rate: Double = 0
+ 
+  // rent_calculator props
+  var rent = 0.0
+  var biweeklyIncome = 0.0
+  var feeRate = 0.0
 }
+

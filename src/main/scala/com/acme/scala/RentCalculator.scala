@@ -8,7 +8,7 @@ object RentCalculator {
     val twoMonthsRent = rent * 2
     val fee = if (feeRate > 0) rent * 12 * (feeRate / 100) else 0
     val total = twoMonthsRent + fee
-    val payCycles = math.ceil(total / biweeklyIncome)
+    val payCycles = math.ceil(total / biweeklyIncome).toInt
     Map(
       "twoMonthsRent" -> twoMonthsRent,
       "fee" -> fee,
@@ -16,3 +16,4 @@ object RentCalculator {
       "payCycles" -> payCycles)
   }
 }
+
